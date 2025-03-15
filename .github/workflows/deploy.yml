@@ -12,15 +12,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
+      - name: Replace Firebase placeholders
         env:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
@@ -29,15 +21,26 @@ jobs:
           FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         run: |
-          echo "const firebaseConfig = {
-            apiKey: process.env.FIREBASE_API_KEY,
-            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-            appId: process.env.FIREBASE_APP_ID,
-          };" > firebase-config.js
-          npm run build
+          sed -i "s/FIREBASE_API_KEY/$FIREBASE_API_KEY/g" public/signup.js
+          sed -i "s/FIREBASE_AUTH_DOMAIN/$FIREBASE_AUTH_DOMAIN/g" public/signup.js
+          sed -i "s/FIREBASE_PROJECT_ID/$FIREBASE_PROJECT_ID/g" public/signup.js
+          sed -i "s/FIREBASE_STORAGE_BUCKET/$FIREBASE_STORAGE_BUCKET/g" public/signup.js
+          sed -i "s/FIREBASE_MESSAGING_SENDER_ID/$FIREBASE_MESSAGING_SENDER_ID/g" public/signup.js
+          sed -i "s/FIREBASE_APP_ID/$FIREBASE_APP_ID/g" public/signup.js
+
+          sed -i "s/FIREBASE_API_KEY/$FIREBASE_API_KEY/g" public/login.js
+          sed -i "s/FIREBASE_AUTH_DOMAIN/$FIREBASE_AUTH_DOMAIN/g" public/login.js
+          sed -i "s/FIREBASE_PROJECT_ID/$FIREBASE_PROJECT_ID/g" public/login.js
+          sed -i "s/FIREBASE_STORAGE_BUCKET/$FIREBASE_STORAGE_BUCKET/g" public/login.js
+          sed -i "s/FIREBASE_MESSAGING_SENDER_ID/$FIREBASE_MESSAGING_SENDER_ID/g" public/login.js
+          sed -i "s/FIREBASE_APP_ID/$FIREBASE_APP_ID/g" public/login.js
+
+          sed -i "s/FIREBASE_API_KEY/$FIREBASE_API_KEY/g" public/play.js
+          sed -i "s/FIREBASE_AUTH_DOMAIN/$FIREBASE_AUTH_DOMAIN/g" public/play.js
+          sed -i "s/FIREBASE_PROJECT_ID/$FIREBASE_PROJECT_ID/g" public/play.js
+          sed -i "s/FIREBASE_STORAGE_BUCKET/$FIREBASE_STORAGE_BUCKET/g" public/play.js
+          sed -i "s/FIREBASE_MESSAGING_SENDER_ID/$FIREBASE_MESSAGING_SENDER_ID/g" public/play.js
+          sed -i "s/FIREBASE_APP_ID/$FIREBASE_APP_ID/g" public/play.js
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
