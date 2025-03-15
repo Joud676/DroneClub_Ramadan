@@ -20,19 +20,19 @@ const currentDay = currentDate.getDate();
 const daysGrid = document.getElementById("days-grid");
 if (daysGrid) {
     days.forEach(day => {
-        const daySquare = document.createElement("div");
-        daySquare.className = "day-square";
-        daySquare.textContent = `${day} رمضان`;
+    const daySquare = document.createElement("div");
+    daySquare.className = "day-square";
+    daySquare.textContent = `${day} رمضان`;
 
-        if (day > currentDay) {
-            daySquare.classList.add("disabled");
-            daySquare.style.pointerEvents = "none";
-            daySquare.style.opacity = "0.5";
-        }
+    if (day !== currentDay) {
+        daySquare.classList.add("disabled");
+        daySquare.style.pointerEvents = "none";
+        daySquare.style.opacity = "0.5";
+    }
 
-        daySquare.addEventListener("click", () => showQuestion(day));
-        daysGrid.appendChild(daySquare);
-    });
+    daySquare.addEventListener("click", () => showQuestion(day));
+    daysGrid.appendChild(daySquare);
+});
 
     loadUserProgress();
 } else {
