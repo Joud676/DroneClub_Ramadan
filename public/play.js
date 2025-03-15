@@ -1,24 +1,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-async function loadFirebaseConfig() {
-    try {
-        const response = await fetch('/config.json');
-        const firebaseConfig = await response.json();
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+};
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        console.log("Firebase initialized successfully!");
-
-        return db;
-    } catch (error) {
-        console.error("Error loading Firebase config:", error);
-        alert("Failed to load Firebase settings.");
-        return null;
-    }
-}
-
-const dbPromise = loadFirebaseConfig();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const days = Array.from({ length: 15 }, (_, i) => i + 15);
 const currentDate = new Date();
@@ -47,9 +40,6 @@ if (daysGrid) {
 }
 
 async function loadUserProgress() {
-    const db = await dbPromise;
-    if (!db) return;
-
     const username = localStorage.getItem("username");
     if (!username) {
         alert("لم يتم العثور على اسم المستخدم. الرجاء تسجيل الدخول مرة أخرى.");
@@ -74,9 +64,6 @@ async function loadUserProgress() {
 }
 
 async function showQuestion(day) {
-    const db = await dbPromise;
-    if (!db) return;
-
     const questionSection = document.getElementById("question-section");
     const questionTitle = document.getElementById("question-title");
     const questionChoices = document.getElementById("question-choices");
@@ -150,9 +137,6 @@ async function showQuestion(day) {
 }
 
 async function updateUserProgress(day, result) {
-    const db = await dbPromise;
-    if (!db) return;
-
     const username = localStorage.getItem("username");
     if (!username) {
         alert("لم يتم العثور على اسم المستخدم. الرجاء تسجيل الدخول مرة أخرى.");
