@@ -1,22 +1,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-async function loadFirebaseConfig() {
-    try {
-        const response = await fetch('/config.json');
-        const firebaseConfig = await response.json();
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        console.log("Firebase initialized successfully!");
-        return db;
-    } catch (error) {
-        console.error("Error loading Firebase config:", error);
-        alert("Failed to load Firebase settings.");
-        return null;
-    }
-}
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+};
 
-const dbPromise = loadFirebaseConfig();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 document.getElementById("signup-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -30,9 +25,6 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
     }
 
     try {
-        const db = await dbPromise;
-        if (!db) return;
-
         const userRef = doc(db, "Users", username);
         const userDoc = await getDoc(userRef);
 
