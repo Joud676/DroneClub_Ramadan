@@ -2,12 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebas
 import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "FIREBASE_API_KEY",
-  authDomain: "FIREBASE_AUTH_DOMAIN",
-  projectId: "FIREBASE_PROJECT_ID",
-  storageBucket: "FIREBASE_STORAGE_BUCKET",
-  messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
-  appId: "FIREBASE_APP_ID",
+  apiKey: "AIzaSyDdDcXqRLypztFUskDHx3DD-eXqRSeM9j8",
+  authDomain: "ramadan-7647a.firebaseapp.com",
+  projectId: "ramadan-7647a",
+  storageBucket: "ramadan-7647a.firebasestorage.app",
+  messagingSenderId: "572887923466",
+  appId: "1:572887923466:web:d5b3555a20ebf6b79658f3",
 };
 
 const app = initializeApp(firebaseConfig);
