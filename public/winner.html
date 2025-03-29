@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الفائزون - تحدي فوازير رمضان</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+             apiKey: "FIREBASE_API_KEY",
+             authDomain: "FIREBASE_AUTH_DOMAIN",
+             projectId: "FIREBASE_PROJECT_ID",
+             storageBucket: "FIREBASE_STORAGE_BUCKET",
+             messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
+             appId: "FIREBASE_APP_ID",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const usersRef = collection(db, "Users");
+                const q = query(usersRef, orderBy("score", "desc"), limit(3));
+                const querySnapshot = await getDocs(q);
+                const winnersContainer = document.getElementById('winners-container');
+                winnersContainer.innerHTML = '';
+
+                if (querySnapshot.empty) {
+                    winnersContainer.innerHTML = '<div class="no-winners">لا يوجد فائزون حتى الآن</div>';
+                    return;
+                }
+
+                let position = 1;
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    const username = userData.username || "مجهول";
+                    const score = userData.score || 0;
+                    const winnerCard = document.createElement('div');
+                    winnerCard.className = `winner-card position-${position}`;
+
+                    winnerCard.style.animationDelay = `${position * 0.2}s`;
+
+                    const medalIcons = [
+                        '<i class="fas fa-crown gold"></i>',
+                        '<i class="fas fa-award silver"></i>',
+                        '<i class="fas fa-award bronze"></i>'
+                    ];
+
+                    const positionTitles = [
+                        '<span class="position-title">الفائز الأول</span>',
+                        '<span class="position-title">الفائز الثاني</span>',
+                        '<span class="position-title">الفائز الثالث</span>'
+                    ];
+
+                    winnerCard.innerHTML = `
+                        <div class="winner-medal">${medalIcons[position - 1] || ''}</div>
+                        <div class="winner-details">
+                            ${positionTitles[position - 1] || ''}
+                            <h3 class="winner-name">${username}</h3>
+                            <div class="winner-score-container">
+                                <span class="score-label">النقاط:</span>
+                                <span class="score-value">${score}</span>
+                            </div>
+                        </div>
+                        <div class="winner-position">${position}</div>
+                    `;
+
+                    winnersContainer.appendChild(winnerCard);
+                    position++;
+                });
+            } catch (error) {
+                console.error("Error fetching winners:", error);
+                document.getElementById('winners-container').innerHTML =
+                    '<div class="error">حدث خطأ أثناء جلب بيانات الفائزين. الرجاء المحاولة مرة أخرى.</div>';
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="">
+    <style>
+        :root {
+            --primary-color: #5a3d7a;
+            --secondary-color: #422e5c;
+            --accent-color: #8d6ecc;
+            --light-color: #f8f5ff;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+            --text-dark: #2d2727;
+            --text-light: #f8f8f8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
+            background-attachment: scroll;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .winners-section {
+            background-color: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(73, 67, 108, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .winners-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #71357b, var(--silver), #886d8a);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 80px;
+            height: 4px;
+            background-color: #5a3d7a;
+            border-radius: 2px;
+        
+        }
+
+        .section-header p {
+            padding-top: 2rem;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .winners-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+
+        .winner-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .winner-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .winner-card.position-1 {
+            border: 2px solid var(--gold);
+        }
+
+        .winner-card.position-1::before {
+            background-color: var(--gold);
+        }
+
+        .winner-card.position-2 {
+            border: 2px solid var(--silver);
+        }
+
+        .winner-card.position-2::before {
+            background-color: var(--silver);
+        }
+
+        .winner-card.position-3 {
+            border: 2px solid var(--bronze);
+        }
+
+        .winner-card.position-3::before {
+            background-color: var(--bronze);
+        }
+
+        .winner-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .winner-medal {
+            font-size: 2.5rem;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 1.5rem;
+        }
+
+        .winner-medal i {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .gold {
+            color: var(--gold);
+        }
+
+        .silver {
+            color: var(--silver);
+        }
+
+        .bronze {
+            color: var(--bronze);
+        }
+
+        .winner-details {
+            flex: 1;
+            text-align: right;
+        }
+
+        .position-title {
+            display: block;
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 0.3rem;
+        }
+
+        .winner-name {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .winner-score-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .score-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            background-color: rgba(90, 61, 122, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .winner-position {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ddd;
+            margin-right: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            text-align: center;
+            margin: 1.5rem 0;
+            line-height: 1.6;
+        }
+
+        .back-to-home {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(90, 61, 122, 0.2);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(90, 61, 122, 0.3);
+        }
+
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+            opacity: 0.8;
+        }
+
+        .loading,
+        .no-winners,
+        .error {
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .loading {
+            color: var(--primary-color);
+            background-color: rgba(90, 61, 122, 0.1);
+        }
+
+        .no-winners {
+            color: #666;
+            background-color: #f5f5f5;
+        }
+
+        .error {
+            color: #e74c3c;
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+                margin: 1rem auto;
+            }
+
+            .winners-section {
+                padding: 1.5rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.7rem;
+            }
+
+            .winner-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem 1rem;
+            }
+
+            .winner-medal {
+                margin-left: 0;
+                margin-bottom: 1rem;
+            }
+
+            .winner-details {
+                text-align: center;
+            }
+
+            .winner-score-container {
+                justify-content: center;
+            }
+
+            .winner-position {
+                margin-right: 0;
+                margin-top: 1rem;
+            }
+
+            .header-logo {
+                width: 70px;
+            }
+
+            .logo-sub {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .winner-name {
+                font-size: 1.3rem;
+            }
+
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-content">
+            <nav class="logo-container">
+                <div class="logo-wrapper">
+                    <img src="dronelogo.png" alt="شعار نادي الدرون" class="header-logo">
+                    <p class="logo-sub">تحدي فوازير رمضان</p>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="winners-section">
+            <header class="section-header">
+                <h2>الفائزون في التحدي</h2>
+                <p>أعلى 3 مشاركين حصلوا على أعلى النقاط</p>
+            </header>
+            <div class="winners-container" id="winners-container">
+                <div class="loading">جاري تحميل البيانات...</div>
+            </div>
+            <p class="subtitle">مبارك للفائزين! سوف يتم التواصل معكم عبر البريد الإلكتروني المسجل</p>
+
+            <div class="back-to-home">
+                <a href="index.html" class="btn">العودة إلى الصفحة الرئيسية</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>نادي الدرون 2025 &copy;</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/company/drone-club-uj/posts/?feedView=all" target="_blank">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://x.com/DroneClub_UJ" target="_blank">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="https://chat.whatsapp.com/CFh9qieSpbR1rPyEBUVw6q" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
