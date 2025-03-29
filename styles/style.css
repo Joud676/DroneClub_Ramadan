@@ -225,52 +225,6 @@ body {
 }
 
 
-
-.container {
-    max-width: 500px;
-    margin: 100px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-    font-size: 24px;
-    margin-top: 10px;
-}
-
-.subtitle {
-    font-size: 18px;
-    color: #666;
-    margin-top: 15px;
-}
-
-.buttons {
-    margin-top: 20px;
-}
-
-.btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    background: var(--primary-purple);
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-
-.btn:hover {
-    background: var(--light-purple);
-}
-
-.btn-secondary:hover {
-    background: var(--accent-purple);
-}
-
 @media screen and (min-width: 200px) and (max-width: 900px) {
     .header-logo {
         width: 30%;
